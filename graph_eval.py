@@ -242,7 +242,7 @@ def graph_compile2gen(graph, **kw):
 		
 
 @defnk
-def graph(defn):
+def example(defn):
 	@defn
 	def n(xs):
 		return float(len(xs))
@@ -262,12 +262,12 @@ def graph(defn):
 	
 def main():
 	print 'compiled graph'
-	for k, el in graph.iteritems():
+	for k, el in example.iteritems():
 		print k, el
 
 	print '\nserial run graph_compile2gen'
 	try:
-		compiled = graph_compile2gen(graph, xs=range(10))
+		compiled = graph_compile2gen(example, xs=range(10))
 		jobs = compiled.next()
 		while True:
 			j_key, j_func, j_env = jobs.pop()
@@ -278,7 +278,7 @@ def main():
 
 	print '\nparallel run graph_compile2gen'
 	try:
-		compiled = graph_compile2gen(graph, xs=range(10))
+		compiled = graph_compile2gen(example, xs=range(10))
 		jobs = compiled.next()
 		while True:
 			jobs = compiled.send(dict( (j_key, j_func(**j_env)) for j_key, j_func, j_env in jobs)) 
@@ -287,15 +287,15 @@ def main():
 		print j_env
 
 	print '\ncompiled with defnk_compile2func'
-	graph_func = defnk_compile2func(graph)
+	graph_func = defnk_compile2func(example)
 	try:
 		graph_func()
 	except Exception, e:
-		print '{0}: {1}'.format(e.__class__.__name__, e)
+		print 'its ok to get here', '{0}: {1}'.format(e.__class__.__name__, e)
 	print graph_func(xs=range(10))
 
 	print '\ncompiled with defnk_compile2lazyfunc'
-	graph_lazyfunc = defnk_compile2lazyfunc(graph)
+	graph_lazyfunc = defnk_compile2lazyfunc(example)
 	print graph_lazyfunc('m2','n', xs=range(10))
 
 
